@@ -27,4 +27,4 @@ var intv = setInterval(function() {
         image.textContent = ''
         image.appendChild(img);
     }
-}, 2000);
+}, 10000);
