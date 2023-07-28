@@ -1,0 +1,30 @@
+// ==UserScript==
+// @name         MAP - TMWSTW
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Dora is a bitch IM THE MAP!!!!
+// @author       KaTZWorlD seaturtles!!! aye seaturles
+// @match        https://play.tmwstw.io/
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=tmwstw.io
+// @grant        none
+// ==/UserScript==
+
+
+var intv = setInterval(function() {
+    var plot = document.getElementById('plot_id').lastChild.textContent.slice(-4).replace('#','');
+    var image = document.getElementById('plot_id');
+    var img = document.createElement("img");
+    img.src = `https://meta.tmwstw.io/preview_plots_${plot}.jpg`;
+    img.height = 300;
+    img.width = 300;
+    if(plot.length < 1){
+        return false;
+    }
+    //when element is found, clear the interval.
+    //clearInterval(intv); //loop it ... loooooop it real good
+    for (var i = 0, len = plot.length; i < len; i++){
+        plot[i].value = "";
+        image.textContent = ''
+        image.appendChild(img);
+    }
+}, 2000);
