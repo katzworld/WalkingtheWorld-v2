@@ -1,16 +1,15 @@
 // ==UserScript==
-// @name         MAP - TMWSTW
+// @name         MAP overlay - TMWSTW
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      1.3
 // @description  Dora is a bitch IM THE MAP!!!!
 // @author       KaTZWorlD seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/
-// @grant        none
 // ==/UserScript==
 
 
 var intv = setInterval(function() {
-    var plot = document.getElementById('plot_id').lastChild.textContent.slice(-4).replace('#','');
+    var plot = document.getElementById('plot_id').lastChild.textContent.slice(-4).replace('#','').replace(' ', '');
     var image = document.getElementById('plot_id');
     var img = document.createElement("img");
     img.src = `https://meta.tmwstw.io/preview_plots_${plot}.jpg`;
@@ -19,11 +18,11 @@ var intv = setInterval(function() {
     if(plot.length < 1){
         return false;
     }
-    //when element is found, clear the interval.
     //clearInterval(intv); //loop it ... loooooop it real good
     for (var i = 0, len = plot.length; i < len; i++){
         plot[i].value = "";
-        image.textContent = ''
+        image.textContent = "";
+        //image.textContent = plot;
         image.appendChild(img);
     }
-}, 10000);
+}, 5000)();
