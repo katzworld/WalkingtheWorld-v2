@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         MAP overlay - TMWSTW
+// @name         MAP v2 - TMWSTW
 // @namespace    http://tampermonkey.net/
-// @version      1.5
+// @version      1.6
 // @description  Dora is a bitch IM THE MAP!!!!
 // @author       KaTZWorlD seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/
@@ -19,12 +19,9 @@ var intv = setInterval(function() {
         return false;
     }
     //clearInterval(intv); //loop it ... loooooop it real good
-    for (var i = 0, len = plot.length; i < len; i++){
-        plot[i].value = "";
         var visit_this_session = `PlatOmeter = ${how_many} `;
         image.textContent = visit_this_session;
         //image.textContent = plot;
         image.appendChild(img);
-    }
     how_many +=1;
 }, 5000)();
