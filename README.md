@@ -4,8 +4,7 @@ make the a map on the tmwstw metaverver
 FIX ---FIX paste / F5 => TMWSTW all good keep on traveling the world 
 
 
-![image](https://github.com/katzworld/WalkingtheWorld-v2/assets/3157472/eea88d9e-86bd-41e8-b12b-0d353f49973f)
-
+![Current Look](./Screenshot%202023-10-02%20233251.png)
 
 OG IMAGE FOR THE HISTORY
 
