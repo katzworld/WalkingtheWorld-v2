@@ -3,6 +3,10 @@ make the a map on the tmwstw metaverver
 
 FIX ---FIX paste / F5 => TMWSTW all good keep on traveling the world 
 
+**Press F12 and inside console paste line below**
+
+**localStorage.setItem('lifetime_plot', 1)**
+
 
 ![Current Look](./Screenshot%202023-10-02%20233251.png)
 
