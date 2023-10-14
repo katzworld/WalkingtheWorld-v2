@@ -1,0 +1,152 @@
+//////////////////////////////////////////////
+// ==UserScript==
+// @name         MAP DBASE Hosted
+// @namespace    http://tampermonkey.net/
+// @version      3.01-DBASE
+// @description  Dora is a bitch IM THE MAP++!!!!
+// @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
+// @match        https://play.tmwstw.io/
+// @grant        GM_xmlhttpRequest
+// @connect     https://api-pusher.onrender.com
+// ==/UserScript==
+/////////////////////////////////////////////
+
+
+
+///////////////////////////////////////////
+// get the wallet id for leader board WIP
+///////////////////////////////////////////
+// eslint-disable-next-line no-undef
+let wallet = web3.currentProvider.selectedAddress
+//https://api.tmwstw.io/get_ens@${wallet}
+let ens = ''
+
+function whoAreYou(wallet_id){
+    GM_xmlhttpRequest({
+        method: "GET",
+        url: `https://api.tmwstw.io/get_ens@${wallet_id}`,
+        onload: function(response) {
+            let r = response
+            ens = r.response
+        }
+    })
+    console.log(ens)
+}
+//whoAreYou()
+
+
+
+
+
+/////////////////////////////////////////////
+//       ****FRONT PAGE UI REWORK***
+/////////////////////////////////////////////
+// front page mutation for global look redraw
+// of ui with current workaround plots with 
+// numbers only in title will display the 
+// location on the globe name plots currently 
+// have no hookable id.  hope to make it easier
+// to find a suitable spawn point
+//////////////////////////////////////////////
+
+
+const observerOfPlots = new MutationObserver(entries => {
+    globalTrot(entries[0].target.childNodes)
+})
+
+const targetOfPlots = document.querySelector('#player_plots_container');
+const configOfPlots = {childList: true,
+                       attributes: true,
+                      }
+observerOfPlots.observe(targetOfPlots,configOfPlots)
+
+let globalTrot = (entries)=> {
+    observerOfPlots.disconnect()
+    const arrayOfEntries = [];
+    for (const element of entries) {
+        arrayOfEntries.push(element.firstChild);
+    }
+    //current work around
+    let plotsToChange = document.getElementsByClassName('plot_with_units_cont_title');
+    for (var i = 0; i < plotsToChange.length; i++) {
+        let plotas = plotsToChange[i].textContent.split('_')[1]
+        if (typeof plotas !== "undefined"){
+            plotsToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${plotas}.jpg' width='150' height='150'>`
+            } // change size width and height to look 
+        }
+}
+
+//////////////////////////////////////
+//
+//    M     M      A       PPPPP
+//    M M M M    A   A     P    P
+//    M  M  M    AAAAA     PPPPP
+//    M  M  M    A   A     P
+//    M     M    A   A     P
+//
+///////////////////////////////////////
+// setup and overlay for globe image
+// on screen with plot counter
+// and faucet information grabbed
+// from localnet api server
+///////////////////////////////////////
+
+let how_many = 1 //ALL OF THEM !!
+let liferLocal = localStorage.getItem('lifetime_plot'); // hold a special place on your computer
+//let liferLocal = 0 <--- if problems remove // add them to above line to reset <ASK KAT?>
+let lifer = parseInt(liferLocal, 10)
+//let f_dat=[]//lowest suffering faucet SADNESS :<
+//let liferLocal = 0
+
+const observerOfMap = new MutationObserver(entries => {
+    //console.log(entries)
+    plotThere()
+    //plotThere();
+})
+
+const targetOfMap = document.querySelector('#plot_id.plot_id');
+const configOfMap = {childList: true,
+                    }
+observerOfMap.observe(targetOfMap,configOfMap)
+
+let plotThere = ()=> {
+    const plot = document.getElementById('plot_id').lastChild.textContent.slice(-4).replace('#','').replace(' ', '');
+    let image = document.getElementById('plot_id');
+    let img = document.createElement("img");
+    img.src = `https://meta.tmwstw.io/preview_plots_${plot}.jpg`;
+    img.height = 200;
+    img.width = 200;
+
+    let fetchData=(call_screen)=> {
+        GM_xmlhttpRequest({
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            responseType: 'json',
+            url: `https://api-pusher.onrender.com/faucet/${plot}`, //<<change URL to format 
+            onload: function(response) {
+                let r = response;
+                let f_dat = r.response;
+                let bob = f_dat.bob;  //errr for y?
+                let slag = f_dat.slag;
+                let grease = f_dat.grease;
+                let faucetOut = `Bob: ${bob} Slag: ${slag} Grease: ${grease}`
+                call_screen(faucetOut)
+                // check if the faucet id is not in the current.json and 
+                // send back information 
+            }
+        })
+    }
+    let setScreen =(hangyThing) => {
+        let visit_this_session = `Lifetime  PlatOs = ${lifer} \n PlatO/sesh = ${how_many} \n Faucet ${hangyThing} `;
+        image.textContent = visit_this_session;
+        image.appendChild(img);
+        image.setAttribute('style', 'white-space: pre;');
+
+        how_many +=1;
+        lifer +=1;
+        localStorage.setItem('lifetime_plot', lifer);
+    }
+    fetchData(setScreen);
+};
