@@ -18,8 +18,11 @@ https://github.com/katzworld/api-thing for source and setup
 
 <hr>
 
+![FULL OVERLAY](https://github.com/katzworld/WalkingtheWorld-v2/assets/3157472/3d8ed693-6eb0-445a-8d7e-1f9ad7e53809)
 
 current look with full overlay
+
+color HUD for compass and directions 
 
 **see init below if running for the first time**
 
