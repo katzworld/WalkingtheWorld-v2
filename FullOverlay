@@ -1,4 +1,3 @@
-//////////////////////////////////////////////
 // ==UserScript==
 // @name         MAP DBASE Hosted
 // @namespace    http://tampermonkey.net/
@@ -8,47 +7,50 @@
 // @match        https://play.tmwstw.io/
 // @grant        GM_xmlhttpRequest
 // @connect     https://api-pusher.onrender.com
+// @connect     https://api.tmwstw.io
+
 // ==/UserScript==
-/////////////////////////////////////////////
-
-
-
-///////////////////////////////////////////
-// get the wallet id for leader board WIP
-///////////////////////////////////////////
 // eslint-disable-next-line no-undef
 let wallet = web3.currentProvider.selectedAddress
 //https://api.tmwstw.io/get_ens@${wallet}
-let ens = ''
-
-function whoAreYou(wallet_id){
+let ens = []
+//for who setup on leader board WIP
+function whoSuffer(wallet_id){
     GM_xmlhttpRequest({
         method: "GET",
         url: `https://api.tmwstw.io/get_ens@${wallet_id}`,
         onload: function(response) {
             let r = response
             ens = r.response
+            console.log(ens + ' has entered the sufferverse!')
         }
     })
-    console.log(ens)
 }
-//whoAreYou()
+
+function onTheBoard(){
+    whoSuffer(wallet)
+    GM_xmlhttpRequest({
+      method: "POST",
+         data: 'str=' + encodeURIComponent(wallet),
+            headers:{
+                "Content-Type": "application/json"
+            },
+        url: `http://10.0.0.165:3000/`,
+      onload: function(res) {
+       console.log(res)
+      },
+      onerror: function(e) {
+        console.log(e)// ...
+      },
+      fetch: true
+    })
+}
 
 
-
-
-
-/////////////////////////////////////////////
-//       ****FRONT PAGE UI REWORK***
-/////////////////////////////////////////////
-// front page mutation for global look redraw
-// of ui with current workaround plots with 
-// numbers only in title will display the 
-// location on the globe name plots currently 
-// have no hookable id.  hope to make it easier
+// front page mutation for global look redraw of ui with current workaround
+// plots with numbers only in title will display the location on the globe
+// name plots currently have no hookable id currently.  hope to make it easier
 // to find a suitable spawn point
-//////////////////////////////////////////////
-
 
 const observerOfPlots = new MutationObserver(entries => {
     globalTrot(entries[0].target.childNodes)
@@ -66,14 +68,14 @@ let globalTrot = (entries)=> {
     for (const element of entries) {
         arrayOfEntries.push(element.firstChild);
     }
-    //current work around
+    //work around
     let plotsToChange = document.getElementsByClassName('plot_with_units_cont_title');
-    for (var i = 0; i < plotsToChange.length; i++) {
+    for (let i = 0; i < plotsToChange.length; i++) {
         let plotas = plotsToChange[i].textContent.split('_')[1]
         if (typeof plotas !== "undefined"){
-            plotsToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${plotas}.jpg' width='150' height='150'>`
-            } // change size width and height to look 
-        }
+            plotsToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${plotas}.jpg' width='125' height='125'>`
+            }
+    }
 }
 
 //////////////////////////////////////
@@ -97,9 +99,9 @@ let liferLocal = localStorage.getItem('lifetime_plot'); // hold a special place 
 let lifer = parseInt(liferLocal, 10)
 //let f_dat=[]//lowest suffering faucet SADNESS :<
 //let liferLocal = 0
-
 const observerOfMap = new MutationObserver(entries => {
     //console.log(entries)
+
     plotThere()
     //plotThere();
 })
@@ -124,29 +126,62 @@ let plotThere = ()=> {
                 "Content-Type": "application/json"
             },
             responseType: 'json',
-            url: `https://api-pusher.onrender.com/faucet/${plot}`, //<<change URL to format 
+            url: `https://api-pusher.onrender.com/faucet/${plot}`,
             onload: function(response) {
-                let r = response;
+                let r = response
                 let f_dat = r.response;
-                let bob = f_dat.bob;  //errr for y?
-                let slag = f_dat.slag;
-                let grease = f_dat.grease;
+                let bob = f_dat.bob
+                let slag = f_dat.slag
+                let grease = f_dat.grease
                 let faucetOut = `Bob: ${bob} Slag: ${slag} Grease: ${grease}`
                 call_screen(faucetOut)
-                // check if the faucet id is not in the current.json and 
-                // send back information 
             }
         })
     }
     let setScreen =(hangyThing) => {
         let visit_this_session = `Lifetime  PlatOs = ${lifer} \n PlatO/sesh = ${how_many} \n Faucet ${hangyThing} `;
         image.textContent = visit_this_session;
-        image.appendChild(img);
-        image.setAttribute('style', 'white-space: pre;');
+        image.appendChild(img)
+        image.setAttribute('style', 'white-space: pre;')
 
         how_many +=1;
         lifer +=1;
         localStorage.setItem('lifetime_plot', lifer);
     }
     fetchData(setScreen);
+
 };
+
+//////////////////////////////////////////////////////////
+//  HUD SETUP
+// on lock in IE first fresh to dbase and setup
+// change compass  directions to color of red
+// places text to white
+// dstance to green
+//
+//////////////////////////////////////////////////////////
+
+const observerOfHud = new MutationObserver(entries => {
+    compass()
+})
+
+const targetOfHud = document.querySelector('#compas_cont');
+const configOfHud = {childList: true,
+                       attributes: true,
+                      }
+observerOfHud.observe(targetOfHud,configOfHud)
+
+let compass = () => {
+    observerOfHud.disconnect()
+    //onTheBoard()
+    let compass = document.getElementsByClassName('compas_text_big')
+    let places = document.getElementsByClassName('compas_text')
+    let distance = document.getElementsByClassName('compas_dist_text')
+    for(let i =0; i < places.length ; i++){
+        places[i].style.color ='#FFF' // TEXT color for location name
+        distance[i].style.color ='#57FF33' // TEXT color of distance marker
+        for(let i =0; i < compass.length ; i++){
+            compass[i].style.color ='#D00' // TEXT color of carn diraction 'NSEW'
+        }
+    }
+}
