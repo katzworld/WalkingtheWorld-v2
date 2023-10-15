@@ -10,7 +10,7 @@ full overlay check and returns the faucet status of the plot your currently
 moving around in the metaverse 
 api is run from https://api-pusher.onrender.com using the API from the king
 if you would like to run your own api to serve this check out 
-https://github.com/katzworld/TMWTTW/ for source and setup 
+https://github.com/katzworld/api-thing for source and setup 
 
 
 
