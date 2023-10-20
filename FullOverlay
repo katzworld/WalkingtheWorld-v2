@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         MAP DBASE Hosted
 // @namespace    http://tampermonkey.net/
-// @version      3.01-DBASE
-// @description  Dora is a bitch IM THE MAP++!!!!
+// @version      3.3-DBASE
+// @description  Dora is a bitch IM THE MAP++!!!! UI front page rework 
 // @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/
 // @grant        GM_xmlhttpRequest
@@ -76,10 +76,10 @@
         let massIVE = document.querySelector("#mass_spawners_plots_txt").innerHTML = `<h3 class="plots_ownership_title" id="mass_spawners_plots_txt" style="display: block;">Spawn at the massive spawner <br><img src ='https://meta.tmwstw.io/preview_plots_120.jpg' width='200' height='200'></h3>`
         let rando = document.querySelector('#random_spawn_button').textContent.split('_')[1]
         if (typeof rando !== "undefined"){
-            //number plotas
-            document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${plotas}.jpg' width='200' height='200'></h3>`
+            //number plotas get me a number !
+            document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${rando}.jpg' width='200' height='200'></h3>`
             } else {
-                //named plota
+                //named plota get me the index of the !
                 let plotas = document.querySelector('#random_spawn_button').textContent
                 let index = names.indexOf(plotas)
                 document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'></h3>`
@@ -120,7 +120,6 @@
     // and faucet information grabbed
     // from localnet api server
     ///////////////////////////////////////
-
 
     const observerOfMap = new MutationObserver((entries, observer) => {
         plotThere(observer)
