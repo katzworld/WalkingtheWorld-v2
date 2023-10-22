@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         MAP DBASE Hosted
 // @namespace    http://tampermonkey.net/
-// @version      3.3-DBASE
-// @description  Dora is a bitch IM THE MAP++!!!! UI front page rework 
+// @version      3.1-DBASE
+// @description  Dora is a bitch IM THE MAP++!!!!
 // @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/
 // @grant        GM_xmlhttpRequest
@@ -10,6 +10,7 @@
 // @connect     https://api.tmwstw.io
 // ==/UserScript==
 
+//dont forget to clear local storage after update run > localStorage.clear(); as shown on the github page 
 
 (function() {
 
@@ -36,6 +37,7 @@
             }
         })
     }
+
     /////////////////////
     // init setup from 0 we all start!
     // setup local storage
@@ -121,6 +123,7 @@
     // from localnet api server
     ///////////////////////////////////////
 
+
     const observerOfMap = new MutationObserver((entries, observer) => {
         plotThere(observer)
     })
@@ -150,7 +153,8 @@
                 url: `https://api-pusher.onrender.com/faucet/${plot}`,
                 onload: function(response) {
                         let r = response
-                        if (r !== "undefined"){
+                        //console.log(r)
+                        if (r.responseType == 'json'){
                             let f_dat = r.response;
                             let bob = f_dat.bob
                             let slag = f_dat.slag
@@ -158,16 +162,15 @@
                             let faucetOut = `Bob: ${bob} Slag: ${slag} Grease: ${grease}`
                             call_screen(faucetOut,plot)
                         } else {
-                            let faucetOut = `UnTapped Potential`
+                            let faucetOut = 'UnTapped!'
                             call_screen(faucetOut,plot)
                         }
                 }
             })
         }
 
-        let setScreen =(hangyThing,plot_id) => {
-            //sending_xml(plot_id) //leaderBOARD!!!
-            let visit_this_session = `Lifetime  PlatOs = ${lifer} \n PlatO/sesh = ${how_many} \n Faucet ${hangyThing} `;
+        let setScreen =(faucet_output,plot_id) => {
+            let visit_this_session = `Lifetime  PlatOs = ${lifer} \n PlatO/sesh = ${how_many} \n Faucet ${faucet_output} `;
             image.textContent = visit_this_session;
             image.appendChild(img)
             image.setAttribute('style', 'white-space: pre;')
@@ -178,24 +181,8 @@
         fetchData(setScreen);
     };
 
+     
 
-/*     function sending_xml(plot_as) {
-        console.log(`${ens}@${plot_as}`); //check in display
-        const sufferplot = `suffer=${ens}&lifetime_plotas=${lifer}&plota=${plot_as}&check=${plota_ses}`
-        GM_xmlhttpRequest ({
-            method:     "POST",
-            url:        "http://10.0.0.165:3000/api",
-            data:       sufferplot,
-            headers:    {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            onload:     function (res,req) {
-            }
-        });
-        plota_ses +=1//
-    }
-
- */
     //////////////////////////////////////////////////////////
     //  HUD SETUP
     // on lock in IE first fresh to dbase and setup
@@ -205,7 +192,7 @@
     //////////////////////////////////////////////////////////
 
     const observerOfHud = new MutationObserver(entries => {
-        compass()
+        compass(observerOfHud.disconnect())
     })
 
     const targetOfHud = document.querySelector('#compas_cont');
@@ -214,8 +201,7 @@
                         }
     observerOfHud.observe(targetOfHud,configOfHud)
 
-    let compass = () => {
-        observerOfHud.disconnect()
+    let compass = (obs_dicso) => {
         let compass = document.getElementsByClassName('compas_text_big')
         let places = document.getElementsByClassName('compas_text')
         let distance = document.getElementsByClassName('compas_dist_text')
@@ -226,6 +212,7 @@
                 compass[i].style.color ='#D00' // TEXT color of carn diraction 'NSEW'
             }
         }
+    obs_dicso
     }
 
 
