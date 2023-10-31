@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MAP DBASE Hosted
 // @namespace    http://tampermonkey.net/
-// @version      3.1-DBASE
+// @version      3.05-DBASE-Leader
 // @description  Dora is a bitch IM THE MAP++!!!!
 // @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/
@@ -10,7 +10,6 @@
 // @connect     https://api.tmwstw.io
 // ==/UserScript==
 
-//dont forget to clear local storage after update run > localStorage.clear(); as shown on the github page 
 
 (function() {
 
@@ -37,7 +36,6 @@
             }
         })
     }
-
     /////////////////////
     // init setup from 0 we all start!
     // setup local storage
@@ -64,7 +62,7 @@
     const observerOfPlotas = new MutationObserver(entries => {
         globalTrot(entries[0].target.childNodes)
     })
-    const targetOfPlotas = document.querySelector('#player_plots_container');
+    const targetOfPlotas = document.querySelector('#random_spawn_button'); //something everyone sees
     const configOfPlotas = {childList: true,
                             subtree: true,
                            }
@@ -74,7 +72,22 @@
 
     let globalTrot = (entries)=> {
         observerOfPlotas.disconnect()
-        //top level/ mass spawner and rando plotas
+        //player plota
+        let plotasToChange = document.getElementsByClassName('plot_with_units_cont_title');
+        for (let i = 0; i < plotasToChange.length; i++) {
+            let plotas = plotasToChange[i].textContent.split('_')[1]
+            if (typeof plotas !== "undefined"){
+                //number plota
+                plotasToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${plotas}.jpg' width='200' height='200'>`
+            } else {
+                //named plota
+                let plotas = plotasToChange[i].textContent
+                let index = names.indexOf(plotas)
+                plotasToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'>`
+            }
+
+        }
+        //mass spawner
         let massIVE = document.querySelector("#mass_spawners_plots_txt").innerHTML = `<h3 class="plots_ownership_title" id="mass_spawners_plots_txt" style="display: block;">Spawn at the massive spawner <br><img src ='https://meta.tmwstw.io/preview_plots_120.jpg' width='200' height='200'></h3>`
         let rando = document.querySelector('#random_spawn_button').textContent.split('_')[1]
         if (typeof rando !== "undefined"){
@@ -90,21 +103,6 @@
         const arrayOfEntries = [];
         for (const element of entries) {
             arrayOfEntries.push(element.firstChild);
-        }
-        //player plots
-        let plotasToChange = document.getElementsByClassName('plot_with_units_cont_title');
-        for (let i = 0; i < plotasToChange.length; i++) {
-            let plotas = plotasToChange[i].textContent.split('_')[1]
-            if (typeof plotas !== "undefined"){
-                //number plotas
-                plotasToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${plotas}.jpg' width='200' height='200'>`
-            } else {
-                //named plotas
-                let plotas = plotasToChange[i].textContent
-                let index = names.indexOf(plotas)
-                plotasToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'>`
-            }
-
         }
     }
 
@@ -152,24 +150,36 @@
                 responseType: 'json',
                 url: `https://api-pusher.onrender.com/faucet/${plot}`,
                 onload: function(response) {
-                        let r = response
-                        //console.log(r)
-                        if (r.responseType == 'json'){
-                            let f_dat = r.response;
-                            let bob = f_dat.bob
-                            let slag = f_dat.slag
-                            let grease = f_dat.grease
-                            let faucetOut = `Bob: ${bob} Slag: ${slag} Grease: ${grease}`
-                            call_screen(faucetOut,plot)
-                        } else {
-                            let faucetOut = 'UnTapped!'
-                            call_screen(faucetOut,plot)
+                    let r = response
+                    //console.log(r)
+                    if (r.responseType == 'json'){
+                        let f_dat = r.response;
+                        let bob = f_dat.bob
+                        if (typeof bob == 'undefined'){
+                            console.log('bob')
                         }
+                        let slag = f_dat.slag
+                        if (typeof slag == 'undefined'){
+                            console.log('slag')
+                            //slag.style.color = "black";
+                        }
+                        let grease = f_dat.grease
+                        if (typeof grease == 'undefined'){
+                            console.log('grease')
+                            //grease.style.color = "black";
+                        }
+                        let faucetOut = `Bob: ${bob} Slag: ${slag} Grease: ${grease}`
+                            call_screen(faucetOut,plot)
+                    } else {
+                        let faucetOut = 'UnTapped!'
+                        call_screen(faucetOut,plot)
+                    }
                 }
             })
         }
 
         let setScreen =(faucet_output,plot_id) => {
+            //console.log(faucet_output)
             let visit_this_session = `Lifetime  PlatOs = ${lifer} \n PlatO/sesh = ${how_many} \n Faucet ${faucet_output} `;
             image.textContent = visit_this_session;
             image.appendChild(img)
@@ -181,8 +191,7 @@
         fetchData(setScreen);
     };
 
-     
-
+   
     //////////////////////////////////////////////////////////
     //  HUD SETUP
     // on lock in IE first fresh to dbase and setup
@@ -202,6 +211,9 @@
     observerOfHud.observe(targetOfHud,configOfHud)
 
     let compass = (obs_dicso) => {
+        obs_dicso
+        let crosshair = document.querySelector("#crosshair_image_2")
+        crosshair.src = 'https://katzworld.github.io/TMWTTW/animated.png'
         let compass = document.getElementsByClassName('compas_text_big')
         let places = document.getElementsByClassName('compas_text')
         let distance = document.getElementsByClassName('compas_dist_text')
@@ -212,8 +224,6 @@
                 compass[i].style.color ='#D00' // TEXT color of carn diraction 'NSEW'
             }
         }
-    obs_dicso
     }
-
-
+   
     })();
