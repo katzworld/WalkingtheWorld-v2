@@ -5,9 +5,10 @@ this runs in browser with the TamperMonkey Extension provides overlay and ui rew
 The Man Who Sold The World Metaverse please check out the project https://tmwstw.io/ dude is KILLING IT !!! 
 
 <hr>
+
 NOT SEEING ANYHTING IN FULL OVERLAY CHECK THESE SETTINGS !
 inside tampermonkey settings click beginner box under config box  
-[Alt text](image-1.png)
+![Alt text](image-1.png)
 this is the permissions to run checks and returns 
 the faucet status of the plot your currently 
 moving around in the metaverse 
