@@ -1,19 +1,17 @@
 // ==UserScript==
-// @name         MAP DBASE Hosted
+// @name         MAP DBASE Hosted LeaderBoard
 // @namespace    http://tampermonkey.net/
-// @version      3.05-DBASE-Leader
-// @description  Dora is a bitch IM THE MAP++!!!!
+// @version      4.58-DBASE-Leader_Board
+// @description  Dora is a bitch IM THE MAP + smoken da bear!
 // @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/
 // @grant        GM_xmlhttpRequest
-// @connect     https://api-pusher.onrender.com
+// @connect     https://api.imamkatz.com/
 // @connect     https://api.tmwstw.io
 // ==/UserScript==
 
-
 (function() {
-
-
+    const sidebar = '150' //image map
     //////////////////////////////////////////////////////////////
     //  WHO ARE YOU ?
     //  get wallet id from web3.instance
@@ -22,6 +20,10 @@
     ////////////////////////////////////////////////////////////////
     //https://api.tmwstw.io/get_ens@${wallet}
     let ens = localStorage.getItem('whoeareyou')
+    GM_xmlhttpRequest({
+        method: "GET",
+        url:       'https://api.imamkatz.com/api/',
+        onload: function(res) {}})
     if (typeof ens && ens !== "undefined"){
         // eslint-disable-next-line no-undef
         let wallet = web3.currentProvider.selectedAddress
@@ -36,6 +38,7 @@
             }
         })
     }
+
     /////////////////////
     // init setup from 0 we all start!
     // setup local storage
@@ -100,10 +103,7 @@
                 document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'></h3>`
             }
         document.querySelector("#mass_spawners_plots_txt > img").style.filter = 'grayscale(100%)';
-        const arrayOfEntries = [];
-        for (const element of entries) {
-            arrayOfEntries.push(element.firstChild);
-        }
+
     }
 
     //////////////////////////////////////
@@ -118,7 +118,7 @@
     // setup and overlay for globe image
     // on screen with plot counter
     // and faucet information grabbed
-    // from localnet api server
+    // from api server
     ///////////////////////////////////////
 
 
@@ -138,17 +138,20 @@
         let image = document.getElementById('plot_id');
         let img = document.createElement("img");
         img.src = `https://meta.tmwstw.io/preview_plots_${plot}.jpg`;
-        img.height = 200;
-        img.width = 200;
+        img.height = sidebar;
+        img.width = sidebar;
 
         let fetchData=(call_screen)=> {
+            let faucetURL = `https://api.imamkatz.com/faucet/${plot}`
             GM_xmlhttpRequest({
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 responseType: 'json',
-                url: `https://api-pusher.onrender.com/faucet/${plot}`,
+
+                url: faucetURL,
+//                url: `https://api-pusher.onrender.com/faucet/${plot}`,
                 onload: function(response) {
                     let r = response
                     //console.log(r)
@@ -166,7 +169,7 @@
                         let grease = f_dat.grease
                         if (typeof grease == 'undefined'){
                             console.log('grease')
-                            //grease.style.color = "black";
+                            //grease.style.color = "black";tw
                         }
                         let faucetOut = `Bob: ${bob} Slag: ${slag} Grease: ${grease}`
                             call_screen(faucetOut,plot)
@@ -176,24 +179,45 @@
                     }
                 }
             })
-        }
+            }
 
-        let setScreen =(faucet_output,plot_id) => {
-            //console.log(faucet_output)
-            let visit_this_session = `Lifetime  PlatOs = ${lifer} \n PlatO/sesh = ${how_many} \n Faucet ${faucet_output} `;
-            image.textContent = visit_this_session;
-            image.appendChild(img)
-            image.setAttribute('style', 'white-space: pre;')
-            how_many +=1;
-            lifer +=1;
-            parseInt(localStorage.setItem('lifetime_plot', lifer), 10)
-        }
-        fetchData(setScreen);
+            let setScreen =(faucet_output,plot_id) => {
+                sending_xml(plot_id) //leaderBOARD!!!
+                let visit_this_session = `Lifetime  Plats = ${lifer} <br> Plat/sesh = ${how_many} <br> Faucet ${faucet_output} :`;
+                image.innerHTML = visit_this_session;
+                image.appendChild(img)
+                image.setAttribute('style', 'white-space: pre;')
+                how_many +=1;
+                lifer +=1;
+                parseInt(localStorage.setItem('lifetime_plot', lifer), 10)
+            }
+            fetchData(setScreen);
     };
 
-   
+    function sending_xml(plot_as) {
+        console.log(`${ens}@${plot_as}`); //check in display
+        const sufferplot = `{
+        "suffer" : "${ens}",
+        "lifetime_plotas" : "${lifer}",
+        "plota" : "${plot_as}",
+        "check" : "${plota_ses}"
+        }`
+        GM_xmlhttpRequest ({
+            method:     "POST",
+            url:        `https://api.imamkatz.com/api/`,
+            data:       sufferplot,
+            headers:    {
+                "Content-Type": "application/json"
+            },
+            onload:     function (res,req) {
+            }
+        });
+        plota_ses +=1//
+    }
+
+
     //////////////////////////////////////////////////////////
-    //  HUD SETUP
+    // HUD SETUP
     // on lock in IE first fresh to dbase and setup
     // change compass  directions to color of red
     // places text to white
@@ -225,5 +249,116 @@
             }
         }
     }
-   
-    })();
+
+
+
+
+    //    / menus colorization
+    //  #faucet_back_to_play_but = end obsverver
+    //    document.querySelector('#claim_but_bob').textContent == unlocked else  numbers means already unlocked
+    //   document.querySelector('#claim_but_slag').style.backgroundColor = "gold";
+    //    document.querySelector('#claim_but_slag').style.color = "black";
+    //    if numbers is 20 25 200  golden
+    //    if numbers is 16 150 ok no alt for bob of 3
+    //    else number just numbers nothing special
+    //    document.querySelector("#claim_but_container")
+
+    const observerOfClaimBox = new MutationObserver(entries => {
+        //console.log(entries)
+        claimBox(entries,observerOfClaimBox.disconnect())
+    })
+
+    const targetOfClaimBox = document.querySelector('#claim_but_container')
+    const configOfClaimBox = {subtree: true,
+                              attributes: true,
+                              childList: true,
+                             }
+
+    observerOfClaimBox.observe(targetOfClaimBox,configOfClaimBox)
+
+    function claimBox(whatcha,claim_done){
+        claim_done
+        //console.log(whatcha[0].addedNodes[0])
+        //console.log(whatcha[1].addedNodes[0])
+        //console.log(whatcha[2].addedNodes[0])
+        const highGivers = ['16','20','25','150','200']
+        //default the colors and boxes to find
+        let bobBut = document.querySelector('#claim_but_bob')
+        bobBut.style.backgroundColor = "red";
+        bobBut.style.color = "black";
+        let slagBut = document.querySelector('#claim_but_slag')
+        slagBut.style.backgroundColor = "blue";
+        slagBut.style.color = "black";
+        let greaBut = document.querySelector('#claim_but_grease')
+        greaBut.style.backgroundColor = "green";
+        greaBut.style.color = "black";
+
+        //      if (bobBut.textContent.includes('20') == true){
+        //             //console.log('20 bob!')
+        //             bobBut.style.backgroundColor = "gold";
+        //             bobBut.style.color = "red";
+        //         } else if (slagBut.textContent.includes('16') == true){
+        //             //console.log('20 bob!')
+        //             slagBut.style.backgroundColor = "orange";
+        //         } else if (slagBut.textContent.includes('25') == true){
+        //             //console.log('20 bob!')
+        //             slagBut.style.backgroundColor = "gold";
+        //             slagBut.style.color = "red";
+        //         } else if (greaBut.textContent.includes('150') == true){
+        //             //console.log('20 bob!')
+        //             greaBut.style.backgroundColor = "orange";
+        //         } else if (slagBut.textContent.includes('200') == true){
+        //             //console.log('20 bob!')
+        //             greaBut.style.backgroundColor = "orange";
+        //             greaBut.style.color = "red";
+        //         }
+    }
+
+
+    ///////////////////////////////////
+    // give the keyboard focusable suffering
+    // some elements need mouse click to close vs 'esc' or double tap toggle "T" for chat
+    // 'M' for map
+    // esc for faucet menu close
+
+    function addGlobalEvents(type,selector,callback){
+        document.addEventListener(type, e =>{
+            if (e.target.matches(selector)) callback(e)
+        })
+    }
+
+    addGlobalEvents('keyup','body', ev =>{
+        //console.log(ev)
+        if (ev.key == 'P') {// CAP P hold SHIFT
+            document.querySelector("body > div.plot_id_cont_on_screen").hidden = true;
+            document.querySelector("#chat_cont").hidden = true;
+            document.querySelector("#compas_cont").hidden = true;
+            document.querySelector("#compas_cont_NEWS").hidden = true;
+            document.querySelector("#connection_bar").hidden = true;
+            //document.querySelector("#title_container").hidden = true;
+        }
+        if (ev.key == 'p') { // little P no SHIFT
+            document.querySelector("body > div.plot_id_cont_on_screen").hidden = false;
+            document.querySelector("#chat_cont").hidden = false;
+            document.querySelector("#compas_cont").hidden = false;
+            document.querySelector("#compas_cont_NEWS").hidden = false;
+            document.querySelector("#connection_bar").hidden = false;
+            //document.querySelector("#title_container").hidden = false;
+        }
+        if (ev.key == 'Escape') {
+            if (document.querySelector('#claim_but_container').hasChildNodes() == true){
+                document.querySelector('#faucet_back_to_play_but').click();
+                document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+                //document.querySelector("#escape_map_popup").click();
+            } else {
+                return
+                // document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+            }
+        }
+    })
+
+    //window closers
+    // on 2nd tap of M close map  like T in Chat
+    //document.querySelector("#crosshair_image_2").onkeydown = function(event) {
+
+})();
