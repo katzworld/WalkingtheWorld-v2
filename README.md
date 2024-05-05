@@ -22,14 +22,11 @@ hit me up on discord or twitter space will walk you through it if you still have
 --| LeaderBoard in the works |--
 
 <hr> NEW OVERLAY AS OF 5/5/24 CINCO DE MAYO UPDATE !
-![image](5524.png)
+
+![alt text](5524.png)
 
 
 <hr>
-
-
-
-![FULL OVERLAY](https://github.com/katzworld/WalkingtheWorld-v2/assets/3157472/3d8ed693-6eb0-445a-8d7e-1f9ad7e53809)
 
 current look with full overlay
 
