@@ -22,8 +22,7 @@ hit me up on discord or twitter space will walk you through it if you still have
 --| LeaderBoard in the works |--
 
 <hr> NEW OVERLAY AS OF 5/5/24 CINCO DE MAYO UPDATE !
-![image](https://github.com/katzworld/WalkingtheWorld-v2/assets/3157472/7cca7f23-2ca5-4261-9f42-9d399dc28e8c)
-
+![image](5524.png)
 
 
 <hr>
