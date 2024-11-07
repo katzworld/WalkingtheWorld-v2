@@ -3,6 +3,9 @@ make the a map on the tmwstw metaverver and MORE
 
 this runs in browser with the TamperMonkey Extension provides overlay and ui rework for
 The Man Who Sold The World Metaverse please check out the project https://tmwstw.io/ dude is KILLING IT !!! 
+import Map for the overlay 
+import the Clock and Blocks to see the ETC Block number along with surrounding plots of interest like highgivers and midgivers 
+
 
 <hr>
 
@@ -12,7 +15,7 @@ inside tampermonkey settings click beginner box under config box
 this is the permissions to run checks and returns 
 the faucet status of the plot your currently 
 moving around in the metaverse 
-api is run from https://api-pusher.onrender.com using the API from the king
+api is run from https://clock.imamkatz.com/ and https://api.imamkatz.com/ using the API from the king
 if you would like to run your own api to serve this check out 
 https://github.com/katzworld/api-thing for source and setup 
 **Press F12 and inside console and enter code as image**
