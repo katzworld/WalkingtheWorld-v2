@@ -8,11 +8,12 @@
 // @grant        GM_xmlhttpRequest
 // @connect      https://api.imamkatz.com/
 // @connect      https://api.tmwstw.io
+// @updateURL    https://raw.githubusercontent.com/katzworld/WalkingtheWorld-v2/main/FullOverlay
+// @downloadURL  https://raw.githubusercontent.com/katzworld/WalkingtheWorld-v2/main/FullOverlay
+
 // ==/UserScript==
-
-
 (function () {
-    const sidebar = '150' //image map
+    const sidebar = 150; //image map
     //////////////////////////////////////////////////////////////
     //  WHO ARE YOU ?
     //  get wallet id from web3.instance
@@ -20,30 +21,42 @@
     //  CANNONBALL !!!
     ////////////////////////////////////////////////////////////////
     //https://api.tmwstw.io/get_ens@${wallet}
-    let ens = localStorage.getItem('whoareyou')
+
+    let ens = localStorage.getItem('whoareyou');
+    if (ens) {
+        console.log(`${ens} has entered the sufferverse!`);
+    } else {
+        console.log('No ENS found in local storage.');
+    }
+
     GM_xmlhttpRequest({
         method: "GET",
         url: 'https://api.imamkatz.com/api/',
-        onload: function (res) { }
-    })
-    console.log(ens + ' has entered the sufferverse!')
+        onload: function (res) {
+            console.log('API request to imamkatz.com completed.');
+        },
+        onerror: function (err) {
+            console.error('API request to imamkatz.com failed:', err);
+        }
+    });
 
-
-    // if (typeof ens && ens !== "undefined") {
-    //     // eslint-disable-next-line no-undef
-    //     let wallet = web3.currentProvider.selectedAddress
-    //     GM_xmlhttpRequest({
-    //         method: "GET",
-    //         url: `https://api.tmwstw.io/get_ens@${wallet}`,
-    //         onload: function (response) {
-    //             let r = response
-    //             ens = r.response
-    //             localStorage.setItem('whoareyou', ens)
-    //             console.log(ens + ' has entered the sufferverse!')
-    //         }
-    //     })
-    // }
-
+    if (typeof ens !== "undefined" && ens !== null) {
+        // eslint-disable-next-line no-undef
+        const wallet = web3.currentProvider.selectedAddress;
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: `https://api.tmwstw.io/get_ens@${wallet}`,
+            onload: function (response) {
+                const r = response;
+                ens = r.response;
+                localStorage.setItem('whoareyou', ens);
+                console.log(`${ens} has entered the sufferverse!`);
+            },
+            onerror: function (err) {
+                console.error('API request to tmwstw.io failed:', err);
+            }
+        });
+    }
     /////////////////////
     // init setup from 0 we all start!
     // setup local storage
