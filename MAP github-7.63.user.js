@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MAP github 
 // @namespace    https://github.com/katzworld/WalkingtheWorld-v2
-// @version      7.63
+// @version      7.64
 // @description  Dora is a bitch IM THE MAP + smoken da bear!
 // @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/
@@ -13,13 +13,6 @@
 // @grant        none
 // ==/UserScript==
 
-(function() {
-    'use strict';
-
-    // Your code here...
-})();
-
-// ==/UserScript==
 (function () {
     const sidebar = 150; //image map
     //////////////////////////////////////////////////////////////
@@ -400,6 +393,8 @@
             }
         }
     }
-
+    document.addEventListener("keypress", onKeyEvent, false);
+    document.addEventListener("keydown", onKeyEvent, false);
+    document.addEventListener("keyup", onKeyEvent, false);
 })();
 
