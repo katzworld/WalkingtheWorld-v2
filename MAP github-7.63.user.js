@@ -10,7 +10,6 @@
 // @connect     https://api.tmwstw.io
 // @updateURL    https://github.com/katzworld/WalkingtheWorld-v2/raw/main/MAP%20github%20-7.63.user.js
 // @downloadURL  https://github.com/katzworld/WalkingtheWorld-v2/raw/main/MAP%20github%20-7.63.user.js
-// @grant        none
 // ==/UserScript==
 
 (function () {
