@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name         MAP github 
+// @name         MAP github
 // @namespace    https://github.com/katzworld/WalkingtheWorld-v2
-// @version      7.65
+// @version      7.66
 // @description  Dora is a bitch IM THE MAP + smoken da bear!
 // @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
-// @match        https://play.tmwstw.io/
+// @match        https://play.tmwstw.io/*
 // @grant        GM_xmlhttpRequest
 // @connect     https://api.imamkatz.com/
 // @connect     https://api.tmwstw.io
@@ -144,7 +144,7 @@
         } else {
             //named plota get me the index of the !
             let plotas = document.querySelector('#random_spawn_button').textContent
-            let index = names.indexOf(plotas)
+            let index = names.indexOf(plotas) + 1
             document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'></h3>`
         }
         document.querySelector("#mass_spawners_plots_txt > img").style.filter = 'grayscale(100%)';
