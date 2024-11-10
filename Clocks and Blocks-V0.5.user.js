@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         Clocks and Blocks
 // @namespace    http://tampermonkey.net/
-// @version      V1.0
+// @version      V1.123
 // @description  Clocks and blocks with surronding plats
 // @author       KaTZWorlD
 // @match        https://play.tmwstw.io/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=tmwstw.io
 // @grant        GM_xmlhttpRequest
 // @connect      https://clock.imamkatz.com/*
+// @updateURL    https://raw.githubusercontent.com/katzworld/WalkingtheWorld-v2/main/Clocks%20and%20Blocks-V0.5.user.js
+// @downloadURL  https://raw.githubusercontent.com/katzworld/WalkingtheWorld-v2/main/Clocks%20and%20Blocks-V0.5.user.js
 // ==/UserScript==
 
 (function () {
@@ -192,7 +194,7 @@
                 url: folgerurl,
                 onload: function (response) {
                     folgers = response.response.filterPlots;
-                    console.log(folgers)
+                    //console.log(folgers)
                     checkPlats();
                 },
             });
@@ -201,7 +203,7 @@
 
 
         function checkPlats() {
-            if (close !== undefined && touching !== undefined) {
+            if (close !== undefined && touching !== undefined && folgers !== undefined) {
                 //console.log('close: ' + close, 'touching: ' + touching);
                 showFilmContent(close,touching,folgers);
             }
