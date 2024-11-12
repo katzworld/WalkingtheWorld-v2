@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Clocks and Blocks
 // @namespace    http://tampermonkey.net/
-// @version      V1.123
+// @version      V1.135
 // @description  Clocks and blocks with surronding plats
 // @author       KaTZWorlD
 // @match        https://play.tmwstw.io/*
@@ -29,7 +29,7 @@
     let BOB = [], SLAG = [], GREASE = [], INK = [];
     let SLAGMID = [], GREASEMID = [], INKMID = [];
     let namesPlats = [];
-
+    let averageBlockTime = '13000'
 
     /**
      * Fetch data from the API and log the response.
@@ -145,7 +145,7 @@
         console.error('Target element for watcherOfMap not found.');
     }
     function whatsLocal() {
-        const plat = document.getElementById('plot_id').lastChild.textContent.slice(-4).replace('#', '').replace(' ', '');
+        const plat = Number(document.querySelector("#plot_id").innerText.split('#')[1])
         //console.log('plat: ' + plat);
         let close, touching,folgers
         if (plat) {
@@ -298,13 +298,30 @@
            filmDiv.appendChild(span);
         });
     }
-    // Start a timer to run fetchBlockNumberAndDisplay every 15 seconds
+
+        function fetchBlockTime() {
+        GM_xmlhttpRequest({
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            responseType: 'json',
+            url: 'https://etc.blockscout.com/api/v2/stats',
+            onload: function (response) {
+                averageBlockTime = Number(response.response.average_block_time)
+                console.log('setting average block:' + averageBlockTime)
+            }
+        });
+    }
+
+    fetchBlockTime()
+    // Start a timer to run fetchBlockNumberAndDisplay every fetchblockTime :)
     setInterval(() => {
         const filmDiv = document.getElementById('tMFilm');
         if (filmDiv) {
             fetchBlockNumberAndDisplay(filmDiv);
         }
-    }, 15000);
+    }, averageBlockTime);
 
 
 })();
