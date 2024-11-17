@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MAP github
 // @namespace    https://github.com/katzworld/WalkingtheWorld-v2
-// @version      7.66
+// @version      8.88
 // @description  Dora is a bitch IM THE MAP + smoken da bear!
 // @author       @KaTZWorlD  on X  ask about the seaturtles!!! aye seaturles
 // @match        https://play.tmwstw.io/*
@@ -13,50 +13,8 @@
 // ==/UserScript==
 
 (function () {
-    const sidebar = 150; //image map
-    //////////////////////////////////////////////////////////////
-    //  WHO ARE YOU ?
-    //  get wallet id from web3.instance
-    //  store in local variable resolve from api.tmwstw.io/get_ens
-    //  CANNONBALL !!!
-    ////////////////////////////////////////////////////////////////
-    //https://api.tmwstw.io/get_ens@${wallet}
-
-    let ens = localStorage.getItem('whoareyou');
-    if (ens) {
-        console.log(`${ens} has entered the sufferverse!`);
-    } else {
-        console.log('No ENS found in local storage.');
-    }
-
-    GM_xmlhttpRequest({
-        method: "GET",
-        url: 'https://api.imamkatz.com/api/',
-        onload: function (res) {
-            console.log('API request to imamkatz.com completed.');
-        },
-        onerror: function (err) {
-            console.error('API request to imamkatz.com failed:', err);
-        }
-    });
-
-    if (typeof ens !== "undefined" && ens !== null) {
-        // eslint-disable-next-line no-undef
-        const wallet = web3.currentProvider.selectedAddress;
-        GM_xmlhttpRequest({
-            method: "GET",
-            url: `https://api.tmwstw.io/get_ens@${wallet}`,
-            onload: function (response) {
-                const r = response;
-                ens = r.response;
-                localStorage.setItem('whoareyou', ens);
-                console.log(`${ens} has entered the sufferverse!`);
-            },
-            onerror: function (err) {
-                console.error('API request to tmwstw.io failed:', err);
-            }
-        });
-    }
+    const sidebar = 150 //image map
+    let ens; // Declare ens as a global variable
     /////////////////////
     // init setup from 0 we all start!
     // setup local storage
@@ -65,18 +23,17 @@
     let lifer = parseInt(liferLocal, 10)
     if (isNaN(lifer)) {
         console.log('Fresh install')
-        liferLocal = localStorage.setItem('lifetime_plot', 1)
-        parseInt(liferLocal, 10)
+        localStorage.setItem('lifetime_plot', 1)
+        localStorage.setItem('whoareyou', 'ENS undefined please refresh page!');
         location.reload(); //WTF really ok ?
+
     }
-    let plotas = ''
     let plota_ses = 0
     let how_many = 1 //ALL OF THEM !!
-
     //////////////////////////////////////////////////////////////
-    // front page mutation for global look redraw of ui with current workaround
+    // front page mutation for global loo redraw of ui with current workaround
     // plots with numbers only in title will display the location on the globe
-    // name plots currently have no hookable id currently.  hope to make it easier
+    // nameb plots currently have no hookable id currently.  hope to make it easier
     // to find a suitable spawn point
     /////////////////////////////////////////////////////////////////
 
@@ -91,28 +48,80 @@
     observerOfPlotas.observe(targetOfPlotas, configOfPlotas)
 
     let names = [];
-    	// Fetch named plats
-	const fetchNamedPlats = () => {
-		const url = 'https://play.tmwstw.io/data/names.json';
-		GM_xmlhttpRequest({
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			responseType: 'json',
-			url: url,
-			onload: function (response) {
-				names = response.response;
-			}
-		});
-	};
+    // Fetch named plats
+    const fetchNamedPlats = () => {
+        const url = 'https://play.tmwstw.io/data/names.json';
+        GM_xmlhttpRequest({
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            responseType: 'json',
+            url: url,
+            onload: function (response) {
+                names = response.response;
+            }
+        });
+    };
 
-	fetchNamedPlats();
+    fetchNamedPlats();
 
+    function initializeLocalStorageAndRequests() {
+        ens = localStorage.getItem('whoareyou');
 
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: 'https://api.imamkatz.com/api/',
+            onload: function (res) {
+                console.log('API request to imamkatz.com completed.');
+            },
+            onerror: function (err) {
+                console.error('API request to imamkatz.com failed:', err);
+            }
+        });
 
-    let globalTrot = (entries) => {
+        const wallet = web3.currentProvider.selectedAddress;
+        if (wallet) {
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: `https://clock.imamkatz.com/address/${wallet}`,
+                onload: function (response) {
+                    let r = response.response;
+                    ens = r.slice(1, -1).split('"').join(''); // Remove brackets and quotes
+                    localStorage.setItem('whoareyou', ens);
+                    console.log(`${ens} has entered the sufferverse!`);
+                },
+                onerror: function (err) {
+                    console.error('API request leaderboard failed:', err);
+                }
+            });
+        } else {
+
+            console.error('ENS is not defined.');
+        }
+
+    }
+
+    function globalTrot(entries) {
         observerOfPlotas.disconnect()
+        let whoareyouDIV = document.querySelector("#video_settings")
+        // put ens in the div for display
+        initializeLocalStorageAndRequests();
+        if (whoareyouDIV) {
+            let ensDIV = document.createElement('div')
+            ensDIV.style.fontFamily = 'Roboto Condensed'
+            ensDIV.style.textAlign = 'center'
+            ensDIV.style.margin = 'auto'
+            ensDIV.style.fontWeight = 'bold'
+            ensDIV.style.display = 'block'
+            ensDIV.style.color = '#F2F2F2'
+            ensDIV.style.fontSize = '20px'
+            ensDIV.innerHTML = `Welcome: ${ens} <br> Lifetime Plats: ${lifer} <br> <br>`
+
+
+            // add the ensDiv after the document.querySelector("#video_settings")
+            whoareyouDIV.after(ensDIV)
+        }
         //player plat
         let plotasToChange = document.getElementsByClassName('plot_with_units_cont_title');
         for (let i = 0; i < plotasToChange.length; i++) {
@@ -126,31 +135,29 @@
                 let altindex = names.lastIndexOf(plotas) + 1
                 let index = names.indexOf(plotas) + 1
                 if (altindex !== index) {//double name work around
-                    //                 console.log(altindex,index)
                     plotasToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'>`
-                 } else {
+                } else {
                     plotasToChange[i].innerHTML = `<img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'>`
-                    //console.log(altindex)
                 }
+
             }
-
+            //mass spawner
+            let massIVE = document.querySelector("#mass_spawners_plots_txt").innerHTML = `<h3 class="plots_ownership_title" id="mass_spawners_plots_txt" style="display: block;">Spawn at the massive spawner <br><img src ='https://meta.tmwstw.io/preview_plots_120.jpg' width='200' height='200'></h3>`
+            let rando = document.querySelector('#random_spawn_button').textContent.split('_')[1]
+            if (typeof rando !== "undefined") {
+                //number plotas get me a number !
+                document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${rando}.jpg' width='200' height='200'></h3>`
+            } else {
+                //named plota get me the index of the !
+                let plotas = document.querySelector('#random_spawn_button').textContent
+                let index = names.indexOf(plotas) + 1
+                document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'></h3>`
+            }
+            document.querySelector("#mass_spawners_plots_txt > img").style.filter = 'grayscale(100%)';
+            // Call the new function
+            // initializeLocalStorageAndRequests();
         }
-        //mass spawner
-        let massIVE = document.querySelector("#mass_spawners_plots_txt").innerHTML = `<h3 class="plots_ownership_title" id="mass_spawners_plots_txt" style="display: block;">Spawn at the massive spawner <br><img src ='https://meta.tmwstw.io/preview_plots_120.jpg' width='200' height='200'></h3>`
-        let rando = document.querySelector('#random_spawn_button').textContent.split('_')[1]
-        if (typeof rando !== "undefined") {
-            //number plotas get me a number !
-            document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${rando}.jpg' width='200' height='200'></h3>`
-        } else {
-            //named plota get me the index of the !
-            let plotas = document.querySelector('#random_spawn_button').textContent
-            let index = names.indexOf(plotas) + 1
-            document.querySelector('#plot_spawn_random_txt').innerHTML = `<h3 class="plots_ownership_title" id="plot_spawn_random_txt" style="display: block;">Spawn at popular plot <br><img src ='https://meta.tmwstw.io/preview_plots_${index}.jpg' width='200' height='200'></h3>`
-        }
-        document.querySelector("#mass_spawners_plots_txt > img").style.filter = 'grayscale(100%)';
-
     }
-
     //////////////////////////////////////
     //
     //    M     M      A       PPPPP
@@ -180,13 +187,11 @@
     observerOfMap.observe(targetOfMap, configOfMap)
 
     let plotThere = () => {
-
+        //const plot = Number(document.querySelector("#plot_id").innerText.split('#')[1])
+        //console.log(plot)
         const plot = document.getElementById('plot_id').lastChild.textContent.slice(-4).replace('#', '').replace(' ', '');
         let image = document.getElementById('plot_id');
-        //let image = document.querySelector("#title_container")
         let img = document.createElement("img");
-        //image.after(img);
-        //image.append(img)
         img.src = `https://meta.tmwstw.io/preview_plots_${plot}.jpg`;
         img.height = sidebar;
         img.width = sidebar;
@@ -207,59 +212,41 @@
                     if (r.responseType == 'json') {
                         let f_dat = r.response;
                         //console.log(f_dat)
-                        let bob = f_dat.bob
-                        let slag = f_dat.slag
-                        let grease = f_dat.grease
-                        let ink = f_dat.ink
-                        let bobSpan = `<span id='bob'>Bob: ${bob} </span>`
-                        let slagSpan = `<span id='slag'>Slag: ${slag} </span>`
-                        let greaseSpan = `<span id='grease'>Grease: ${grease} </span>`
-                        let inkSpan = `<span id='ink'>InK: ${ink} </span>`
-                        // if bob ==20 , slag = 25  grease  or ink = 150 insert style = "color: red; and bolder in the #bob span yo!
-                        if (bob == 20) {
-                            bobSpan = `<span id='bob' style="color: red; font-weight: bold;">Bob: ${bob} </span>`
-                        }
-                        if (slag == 25) {
-                            slagSpan = `<span id='slag' style="color: red; font-weight: bold;">Slag: ${slag} </span>`
-                        }
-                        if (grease == 200) {
-                            greaseSpan = `<span id='grease' style="color: red; font-weight: bold;">Grease: ${grease} </span>`
-                        }
-                        if (ink == 150) {
-                            inkSpan = `<span id='ink' style="color: red; font-weight: bold;">InK: ${ink} </span>`
-                        }
-                        // if undefined yellow the span + italic
-                        if (bob == undefined) {
-                            bobSpan = `<span id='bob' style="color: yellow; font-style: italic;">Bob: ${bob} </span>`
-                        }
-                        if (slag == undefined) {
-                            slagSpan = `<span id='slag' style="color: yellow; font-style: italic;">Slag: ${slag} </span>`
-                        }
-                        if (grease == undefined) {
-                            greaseSpan = `<span id='grease' style="color: yellow; font-style: italic;">Grease: ${grease} </span>`
-                        }
-                        if (ink == undefined) {
-                            inkSpan = `<span id='ink' style="color: yellow; font-style: italic;">InK: ${ink}</span>`
-                        }
-                        // RUGS if bob grease or ink == 0 then that is a rug color span black BOOO! keep hunting
-                        if (bob == 0) {
-                            bobSpan = `<span id='bob' style="color: black; font-weight: normal">Bob: ${bob} </span>`
-                        }
-                        if (slag == 1) {
-                            slagSpan = `<span id='slag' style="color: black;font-weight: normal">Slag: ${slag} </span>`
-                        }
-                        if (grease == 0) {
-                            greaseSpan = `<span id='grease' style="color: black;font-weight: normal">Grease: ${grease} </span>`
-                        }
-                        if (ink == 0) {
-                            inkSpan = `<span id='ink' style="color: black;font-weight: normal">InK: ${ink} </span>`
-                        }
-                        let faucetOut = bobSpan + slagSpan + greaseSpan + inkSpan
-                        call_screen(faucetOut, plot)
+                        let bob = f_dat.bob;
+                        let slag = f_dat.slag;
+                        let grease = f_dat.grease;
+                        let ink = f_dat.ink;
+
+                        const createSpan = (id, value, color = "black", fontStyle = "normal", fontWeight = "normal") => {
+                            return `<span id='${id}' style="color: ${color}; font-style: ${fontStyle}; font-weight: ${fontWeight};">${id.charAt(0).toUpperCase() + id.slice(1)}: ${value} </span>`;
+                        };
+
+                        let bobSpan = createSpan('bob', bob);
+                        let slagSpan = createSpan('slag', slag);
+                        let greaseSpan = createSpan('grease', grease);
+                        let inkSpan = createSpan('ink', ink);
+
+                        const updateSpan = (value, span, color, fontStyle = "normal", fontWeight = "bold") => {
+                            if (value === undefined) {
+                                return createSpan(span, value, "yellow", "italic");
+                            } else if (value === 0) {
+                                return createSpan(span, value, "black");
+                            } else if ((span === 'bob' && value === 20) || (span === 'slag' && value === 25) || (span === 'grease' && value === 200) || (span === 'ink' && value === 150)) {
+                                return createSpan(span, value, color, fontStyle, fontWeight);
+                            }
+                            return createSpan(span, value);
+                        };
+
+                        bobSpan = updateSpan(bob, 'bob', "red");
+                        slagSpan = updateSpan(slag, 'slag', "red");
+                        greaseSpan = updateSpan(grease, 'grease', "red");
+                        inkSpan = updateSpan(ink, 'ink', "red");
+
+                        let faucetOut = bobSpan + slagSpan + greaseSpan + inkSpan;
+                        call_screen(faucetOut, plot);
                     } else {
-                        let faucetOut = `<span id='tapped' style="color:Tomato; fontWeight = bolder">UnTapped!</span>`
-                        //document.querySelector("#tapped").style.color = "orange";
-                        call_screen(faucetOut, plot)
+                        let faucetOut = `<span id='tapped' style="color:Tomato; font-weight: bold;">UnTapped!</span>`;
+                        call_screen(faucetOut, plot);
                     }
                 }
             })
@@ -267,7 +254,7 @@
 
 
         let setScreen = (faucet_output, plot_id) => {
-            sending_xml(plot_id) //leaderBOARD!!!
+            sending_xml(plot_id, ens) //leaderBOARD!!!
             let visit_this_session = `<div class='sessiondata'><span id = 'plats'> Lifetime Plats = ${lifer} </span><br><span id='sessplats'>Plat/sesh = ${how_many}</span><br><span id='faucet' style="color:white; font-weight: bold;">Faucet ${faucet_output}</span>:</div>`;
             image.innerHTML = visit_this_session;
             image.appendChild(img)
@@ -279,7 +266,7 @@
         fetchData(setScreen);
     };
 
-    function sending_xml(plot_as) {
+    function sending_xml(plot_as, ens) {
         console.log(`${ens}@${plot_as}`); //check in display
         const sufferplot = `{
         "suffer" : "${ens}",
@@ -415,4 +402,3 @@
     document.addEventListener("keydown", onKeyEvent, false);
     document.addEventListener("keyup", onKeyEvent, false);
 })();
-

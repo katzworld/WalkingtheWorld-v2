@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Clocks and Blocks
 // @namespace    http://tampermonkey.net/
-// @version      V1.135
+// @version      V1.1420
 // @description  Clocks and blocks with surronding plats
 // @author       KaTZWorlD
 // @match        https://play.tmwstw.io/*
@@ -29,7 +29,7 @@
     let BOB = [], SLAG = [], GREASE = [], INK = [];
     let SLAGMID = [], GREASEMID = [], INKMID = [];
     let namesPlats = [];
-    let averageBlockTime = '13000'
+    let averageBlockTime = '13000' //got something to start with
 
     /**
      * Fetch data from the API and log the response.
@@ -145,8 +145,7 @@
         console.error('Target element for watcherOfMap not found.');
     }
     function whatsLocal() {
-        const plat = Number(document.querySelector("#plot_id").innerText.split('#')[1])
-        //console.log('plat: ' + plat);
+        const plat = document.getElementById('plot_id').lastChild.textContent.slice(-4).replace('#', '').replace(' ', '');
         let close, touching,folgers
         if (plat) {
             const surPlats = 'https://clock.imamkatz.com/platall/' + plat;
@@ -214,14 +213,29 @@
     // Function to fetch block number and display it
     function fetchBlockNumberAndDisplay() {
         GM_xmlhttpRequest({
-            method: "GET",
+            /*method: "GET",
             headers: {
                 "Content-Type": "application/json"
             },
             responseType: 'json',
-            url: 'https://clock.imamkatz.com/block',
+            url: 'https://clock.imamkatz.com/block', */
+            method: "POST",
+            url: "https://eth.blockscout.com/api/eth-rpc",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify({
+                id: 0,
+                jsonrpc: "2.0",
+                method: "eth_blockNumber",
+                params: []
+            }),
             onload: function (response) {
                 const blockr = response.response;
+                const jsonResponse = JSON.parse(response.responseText);
+                const hexResult = jsonResponse.result;
+                const decResult = parseInt(hexResult, 16);
+                console.log("Binary Result:", decResult);
                 // Display the block information in the div blockNumber
                 const blockDiv = document.getElementById('blockNumber');
                 blockDiv.innerHTML = ''; // Clear existing content
@@ -230,16 +244,13 @@
                 blockDiv.style.fontSize = '20px';
                 blockDiv.style.padding = '10px';
                 blockDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                blockDiv.textContent = `ETC ${blockr}`;
+                blockDiv.textContent = `ETC Block # ${decResult}`;
             }
         });
     }
 
     // Function to display film content
     function showFilmContent(r, underline,folgers) {
-        //console.log('r: ' + r);
-        //console.log('showme' + folgers)
-        //console.log('underline: ' + underline);
         const filmDiv = document.getElementById('tMFilm');
         filmDiv.innerHTML = ''; // Clear existing content
         filmDiv.style.display = 'block';
@@ -251,55 +262,50 @@
         // Split r string into array named rplats
         const rplats = r.replace('[', '').replace(']', '').split(',').map(Number);
 
-        // Check for overlaps and change text color
+        const styles = {
+            BOB: { color: 'yellow', fontWeight: 'bold', text: 'Bob 20' },
+            SLAGMID: { color: 'darkred', text: 'Slag 16' },
+            SLAG: { color: 'red', fontWeight: 'bold', text: 'Slag 25' },
+            GREASEMID: { color: 'darkgreen', text: 'Grease 150+' },
+            GREASE: { color: 'green', fontWeight: 'bold', text: 'Grease 200+' },
+            INKMID: { color: 'darkblue', text: 'Ink 90+' },
+            INK: { color: 'blue', fontWeight: 'bold', text: 'Ink 150+' },
+            FOLGERS: { color: 'orange', fontWeight: 'bold', text: 'UNTAPPED' },
+        };
+
+        const applyStyles = (plat, name) => {
+            if (BOB.includes(plat)) return { ...styles.BOB, text: ` ${plat} ${name} / ${styles.BOB.text},` };
+            if (SLAGMID.includes(plat)) return { ...styles.SLAGMID, text: ` ${plat} ${name} / ${styles.SLAGMID.text}, ` };
+            if (SLAG.includes(plat)) return { ...styles.SLAG, text: ` ${plat} ${name} / ${styles.SLAG.text}, ` };
+            if (GREASEMID.includes(plat)) return { ...styles.GREASEMID, text: ` ${plat} ${name} / ${styles.GREASEMID.text},` };
+            if (GREASE.includes(plat)) return { ...styles.GREASE, text: ` ${plat} ${name} / ${styles.GREASE.text},` };
+            if (INKMID.includes(plat)) return { ...styles.INKMID, text: ` ${plat} ${name} / ${styles.INKMID.text},` };
+            if (INK.includes(plat)) return { ...styles.INK, text: ` ${plat} ${name} / ${styles.INK.text},` };
+            if (folgers.includes(plat)) return { ...styles.FOLGERS, text: ` ${plat} ${name} / ${styles.FOLGERS.text},` };
+            return { text: ' ' };
+        };
+
         rplats.forEach(plat => {
             const span = document.createElement('span');
             const name = plat < namesPlats.length ? namesPlats[plat - 1] : '';
-            if (BOB.includes(plat)) {
-                span.style.color = 'blue';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} / Bob 20, `;
-            } else if (SLAG.includes(plat)) {
-                span.style.color = 'red';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} / Slag 25, `;
-            } else if (GREASE.includes(plat)) {
-                span.style.color = 'green';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} / Grease 200+, `;
-            } else if (INK.includes(plat)) {
-                span.style.color = 'white';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} / Ink 150+, `;
-            } else if (SLAGMID.includes(plat)) {
-                span.style.color = 'darkred';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} / Slag 16, `;
-            } else if (GREASEMID.includes(plat)) {
-                span.style.color = 'darkgreen';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} / Grease 150+, `;
-            } else if (INKMID.includes(plat)) {
-                span.style.color = 'darkyellow';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} / Ink 90+, `;
-            } else {
-                span.textContent = ` `;
+            const style = applyStyles(plat, name);
+
+            if (style.text.trim()) {
+                span.style.color = style.color || '';
+                span.style.fontWeight = style.fontWeight || '';
+                span.textContent = style.text;
             }
-            // Check if plat is in the touching array
+
             if (underline.includes(plat)) {
                 span.style.textDecoration = 'underline';
             }
-            if (folgers.includes(plat)) {
-                span.style.color = 'orange';
-                span.style.fontWeight = 'bold';
-                span.textContent = `${plat} ${name} UNTAPPED,`;
-            }
-           filmDiv.appendChild(span);
+
+            filmDiv.appendChild(span);
         });
+
     }
 
-        function fetchBlockTime() {
+    function fetchBlockTime() {
         GM_xmlhttpRequest({
             method: "GET",
             headers: {
