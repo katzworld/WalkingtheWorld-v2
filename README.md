@@ -1,3 +1,8 @@
+:warning:**CLOSED AND NO LONGER BEING MAINTAINED**:warning:
+
+[NEW REPO](https://github.com/katzworld/tMonkey)
+
+
 # WalkingtheWorld-v2
 make the a map on the tmwstw metaverver and MORE 
 
